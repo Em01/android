@@ -101,7 +101,7 @@ import com.owncloud.android.lib.common.utils.Log_OC;
 import com.owncloud.android.lib.resources.status.OwnCloudVersion;
 import com.owncloud.android.lib.resources.users.GetRemoteUserInfoOperation;
 import com.owncloud.android.lib.resources.users.GetRemoteUserInfoOperation.UserInfo;
-import com.owncloud.android.operations.DetectAuthenticationMethodOperation.AuthenticationMethod;
+import com.owncloud.android.operations.AuthenticationMethod;
 import com.owncloud.android.operations.GetServerInfoOperation;
 import com.owncloud.android.services.OperationsService;
 import com.owncloud.android.services.OperationsService.OperationsServiceBinder;
@@ -201,7 +201,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
     private boolean mServerIsValid = false;
     private boolean mPendingAutoCheck = false;
 
-    private GetServerInfoOperation.ServerInfo mServerInfo = 
+    private GetServerInfoOperation.ServerInfo mServerInfo =
             new GetServerInfoOperation.ServerInfo();
     
     
@@ -1137,14 +1137,12 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
         /// Show SAML-based SSO web dialog
         ArrayList<String> targetUrls = new ArrayList<>();
         targetUrls.add(
-            mServerInfo.mBaseUrl
-                + AccountUtils.getWebdavPath(mServerInfo.mVersion, mAuthTokenType)
-        );
+                mServerInfo.mBaseUrl
+                        + AccountUtils.getWebdavPath(mServerInfo.mVersion, mAuthTokenType));
         LoginWebViewDialog dialog = LoginWebViewDialog.newInstance(
-            targetUrls.get(0),
-            targetUrls,
-            AuthenticationMethod.SAML_WEB_SSO
-        );
+                targetUrls.get(0),
+                targetUrls,
+                AuthenticationMethod.SAML_WEB_SSO);
         dialog.show(getSupportFragmentManager(), SAML_DIALOG_TAG);
     }
 
@@ -1178,14 +1176,14 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
      *
      * @param result    Result of {@link GetRemoteUserInfoOperation} performed.
      */
-    private void onGetUserNameFinish(RemoteOperationResult result) {
+    private void onGetUserNameFinish(RemoteOperationResult<UserInfo> result) {
         mWaitingForOpId = Long.MAX_VALUE;
         if (result.isSuccess()) {
             boolean success = false;
             // WARNING: using mDisplayName was a path used because, in the past, mId was not avialable
             // in servers with SAML; now seems that changed, and this needs to be updated. Meanwhile,
             // for any other authentication method, please 
-            String username = ((UserInfo) result.getData().get(0)).mDisplayName;
+            String username = result.getData().mDisplayName;
 
             if (mAction == ACTION_CREATE) {
                 mUsernameInput.setText(username);
@@ -1212,7 +1210,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
      *
      * @param result        Result of the check.
      */
-    private void onGetServerInfoFinish(RemoteOperationResult result) {
+    private void onGetServerInfoFinish(RemoteOperationResult<GetServerInfoOperation.ServerInfo> result) {
         /// update activity state
         mServerIsChecked = true;
         mWaitingForOpId = Long.MAX_VALUE;
@@ -1226,7 +1224,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
             //      2. server is installed
             //      3. we got the server version
             //      4. we got the authentication method required by the server 
-            mServerInfo = (GetServerInfoOperation.ServerInfo) (result.getData().get(0));
+            mServerInfo = result.getData();
 
             mServerIsValid = true;
 
@@ -1428,7 +1426,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
      * 
      * @param result Result of the operation.
      */
-    private void onGetOAuthAccessTokenFinish(RemoteOperationResult result) {
+    private void onGetOAuthAccessTokenFinish(RemoteOperationResult<Map<String, String>> result) {
         mWaitingForOpId = Long.MAX_VALUE;
         dismissDialog(WAIT_DIALOG_TAG);
 
@@ -1439,7 +1437,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
 
             /// time to test the retrieved access token on the ownCloud server
             @SuppressWarnings("unchecked")
-            Map<String, String> tokens = (Map<String, String>)(result.getData().get(0));
+            Map<String, String> tokens = result.getData();
             mAuthToken = tokens.get(OAuth2Constants.KEY_ACCESS_TOKEN);
 
             mRefreshToken = tokens.get(OAuth2Constants.KEY_REFRESH_TOKEN);
@@ -1477,7 +1475,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
             Log_OC.d(TAG, "Successful access - time to save the account");
 
             boolean success = false;
-            String username = ((UserInfo) result.getData().get(0)).mId;
+            String username = ((RemoteOperationResult<UserInfo>) result).getData().mId;
 
             if (mAction == ACTION_CREATE) {
 
@@ -1519,7 +1517,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
             /// the server
             mServerIsChecked = true;
             mServerIsValid = false;
-            mServerInfo = new GetServerInfoOperation.ServerInfo();  
+            mServerInfo = new GetServerInfoOperation.ServerInfo();
 
             // update status icon and text
             updateServerStatusIconAndText(result);
@@ -1551,7 +1549,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
      * 
      * TODO Decide how to name the OAuth accounts
      */
-    private boolean createAccount(RemoteOperationResult authResult) {
+    private boolean createAccount(RemoteOperationResult<UserInfo> authResult) {
         /// create and save new ownCloud account
         boolean isOAuth = AccountTypeUtils.
                 getAuthTokenTypeAccessToken(MainApp.getAccountType()).equals(mAuthTokenType);
@@ -1570,7 +1568,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
         Account newAccount = new Account(accountName, MainApp.getAccountType());
         if (AccountUtils.exists(newAccount, getApplicationContext())) {
             // fail - not a new account, but an existing one; disallow
-            RemoteOperationResult result = new RemoteOperationResult(ResultCode.ACCOUNT_NOT_NEW); 
+            RemoteOperationResult result = new RemoteOperationResult(ResultCode.ACCOUNT_NOT_NEW);
             updateAuthStatusIconAndText(result);
             showAuthStatus();
             Log_OC.d(TAG, result.getLogMessage());
@@ -1624,7 +1622,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
             );
             if (authResult.getData() != null) {
                 try {
-                    UserInfo userInfo = (UserInfo) authResult.getData().get(0);
+                    UserInfo userInfo = (UserInfo) authResult.getData();
                     mAccountMgr.setUserData(
                         mAccount, Constants.KEY_DISPLAY_NAME, userInfo.mDisplayName
                     );

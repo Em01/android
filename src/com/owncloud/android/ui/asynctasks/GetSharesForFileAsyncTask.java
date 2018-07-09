@@ -47,7 +47,7 @@ public class GetSharesForFileAsyncTask extends AsyncTask<Object, Void, Pair<Remo
     private final WeakReference<OnRemoteOperationListener> mListener;
 
     public GetSharesForFileAsyncTask(OnRemoteOperationListener listener) {
-        mListener = new WeakReference<OnRemoteOperationListener>(listener);
+        mListener = new WeakReference<>(listener);
     }
 
     @Override
@@ -73,11 +73,11 @@ public class GetSharesForFileAsyncTask extends AsyncTask<Object, Void, Pair<Remo
                 result = operation.execute(client, fileDataStorageManager);
 
             } catch (Exception e) {
-                result = new RemoteOperationResult(e);
+                result = new RemoteOperationResult<>(e);
                 Log_OC.e(TAG, "Exception while getting shares", e);
             }
         } else {
-            result = new RemoteOperationResult(RemoteOperationResult.ResultCode.UNKNOWN_ERROR);
+            result = new RemoteOperationResult<>(RemoteOperationResult.ResultCode.UNKNOWN_ERROR);
         }
 
         return new Pair(operation, result);
