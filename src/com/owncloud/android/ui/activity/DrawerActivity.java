@@ -186,7 +186,7 @@ public abstract class DrawerActivity extends ToolbarActivity {
         }
 
         if(!getResources().getBoolean(R.bool.settings_enabled)) {
-            navigationView.getMenu().removeItem(R.id.drawer_menu_settings_etc);
+            navigationView.getMenu().removeItem(R.id.nav_settings);
         }
 
         navigationView.setNavigationItemSelectedListener(
@@ -565,7 +565,7 @@ public abstract class DrawerActivity extends ToolbarActivity {
                 mAccountChooserToggle.setImageResource(R.drawable.ic_down);
                 mNavigationView.getMenu().setGroupVisible(R.id.drawer_menu_accounts, false);
                 mNavigationView.getMenu().setGroupVisible(R.id.drawer_menu_standard, true);
-                mNavigationView.getMenu().setGroupVisible(R.id.drawer_menu_settings_etc, true);
+                mNavigationView.getMenu().setGroupVisible(R.id.drawer_menu_settings_etc, false);
                 if(mDrawerLogo != null) mDrawerLogo.setVisibility(View.VISIBLE);
             }
         }
