@@ -507,15 +507,12 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity
 
         /// step 2 - set properties of UI elements (text, visibility, enabled...)
         mHostUrlInput = findViewById(R.id.hostUrlInput);
-        // Convert IDN to Unicode
-        mHostUrlInput.setText(DisplayUtils.convertIdn(mServerInfo.mBaseUrl, false));
         mHostUrlInput.setEnabled(false);
         mHostUrlInput.setFocusable(false);
-        if (mAction != ACTION_CREATE) {
-            /// lock things that should not change
-            mHostUrlInput.setEnabled(false);
-            mHostUrlInput.setFocusable(false);
-        }
+        // Convert IDN to Unicode
+        mHostUrlInput.setText(DisplayUtils.convertIdn(mServerInfo.mBaseUrl, false));
+
+        
         if (isUrlInputAllowed) {
 
 
