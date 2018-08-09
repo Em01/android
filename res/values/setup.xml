@@ -15,23 +15,23 @@
     <string name ="log_name" formatted="false">Owncloud_</string>
     <string name ="default_display_name_for_root_folder" formatted="false">ownCloud</string>
     <string name ="user_agent">Mozilla/5.0 (Android) ownCloud-android/%1$s</string>
-    
+
     <!-- URLs and flags related -->
-    <string name="server_url" formatted="false"></string>
+    <string name="server_url" formatted="false">https://cloud.quickrebates.co.uk</string>
     <bool name="show_server_url_input">true</bool>
     <bool name="show_welcome_link">true</bool>
     <string name="welcome_link_url" formatted="false">"https://owncloud.com/mobile/new"</string>
     <string name="share_api_link" formatted="false"></string>
-    
+
     <!-- Flags to setup the authentication methods available in the app -->
     <string name="auth_method_saml_web_sso" formatted="false">off</string>
-    
+
     <!-- Flags to enable/disable some features -->
     <string name = "send_files_to_other_apps" formatted="false">on</string>
     <bool name = "share_via_link_feature">true</bool>
     <bool name = "share_with_users_feature">true</bool>
     <bool name = "warning_sharing_public_link" >true</bool>
-    
+
     <!-- Colors -->
     <color name="login_text_color">#000000</color>
     <color name="login_text_hint_color">#757575</color>
@@ -54,12 +54,13 @@
 
     <!-- Multiaccount support -->
     <bool name="multiaccount_support">true</bool>
-    
+
     <!-- Help, imprint and feedback -->
-    <bool name="help_enabled">true</bool>
-    <bool name="imprint_enabled">false</bool> 
+    <bool name="help_enabled">false</bool>
+    <bool name="settings_enabled">false</bool>
+    <bool name="imprint_enabled">false</bool>
     <bool name="recommend_enabled">true</bool>
-    <bool name="feedback_enabled">true</bool>
+    <bool name="feedback_enabled">false</bool>
     <bool name="logger_enabled">false</bool>
     <bool name="privacy_policy_enabled">true</bool>
     <bool name="wizard_enabled">true</bool>

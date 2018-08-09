@@ -185,6 +185,10 @@ public abstract class DrawerActivity extends ToolbarActivity {
             navigationView.getMenu().removeItem(R.id.drawer_menu_feedback);
         }
 
+        if(!getResources().getBoolean(R.bool.settings_enabled)) {
+            navigationView.getMenu().removeItem(R.id.drawer_menu_settings_etc);
+        }
+
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
